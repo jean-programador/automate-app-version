@@ -6,20 +6,26 @@ namespace AutomacaoVersaoTask
 {
     public class FileUtils
     {
-        private static readonly string _OriginFolderTask = @"C:\PilarSistemas\TaskToDo\TaskTodoAutomation\TaskToDo\bin\Debug";
-        private static readonly string _OriginFolderBrain = @"C:\PilarSistemas\TaskToDo\TaskToDoBrainService\TaskToDoBrainService\bin\Debug";
-        private static readonly string _DestinationFolderTest = @"C:\Users\Dev\Downloads\versoes\VersoesTeste";
-        private static readonly string _DestinationFolderOficial = @"C:\Users\Dev\Downloads\versoes\VersoesOficiais";
-        private static readonly string _WinrarPath = @"C:\Program Files\WinRAR\WinRAR.exe";
-        private static readonly string _SevenZipPath = @"C:\Program Files\7-Zip\7z.exe";
+        private const string ORIGIN_FOLDER_TASK = @""; // Caminho de origem do projeto principal
+        private const string ORIGIN_FOLDER_BRAIN = @""; // Caminho de origem serviço windows
+        private const string DESTINATION_FOLDER_TEST = @""; // Caminho de destino da versão de TESTE
+        private const string DESTINATION_FOLDER_OFICIAL = @""; // Caminho de destino da versão de OFICIAL 
+        private const string WINRAR_PATH = @"C:\Program Files\WinRAR\WinRAR.exe";
+        private const string SEVEN_ZIP_PATH = @"C:\Program Files\7-Zip\7z.exe";
+        private const string NOME_PROJETO_PRINCIPAL = "";
+        private const string NOME_SERVICO_WINDOWS = "";
+        private const string CONFIG_FILE_TASK = ""; // Nome do arquivo de configuração do projeto principal
+        private const string CONFIG_FILE_BRAIN = ""; // Nome do arquivo de configuração do serviço windows
+        private const string NOME_INICIAL_DLLS_NECESSARIAS = ""; // Na versão compacta, as dlls necessárias iniciam sempre com o mesmo nome
+        private const string NOME_ARQUIVO_EXE = "";
 
         public static UploadOptions OficialVersion(string folderName)
         {
-            string destinationFolder = Path.Combine(_DestinationFolderOficial, folderName);
+            string destinationFolder = Path.Combine(DESTINATION_FOLDER_OFICIAL, folderName);
             string fileRAR = Path.GetFileName($"{destinationFolder}(123).rar");
 
-            GenerateCompleteVersion(Path.Combine(destinationFolder, "TaskToDo"), _OriginFolderTask.Replace("Debug", "Release"), brainService: false);
-            GenerateCompleteVersion(Path.Combine(destinationFolder, "BrainService"), _OriginFolderBrain.Replace("Debug", "Release"), brainService: true);
+            GenerateCompleteVersion(Path.Combine(destinationFolder, NOME_PROJETO_PRINCIPAL), ORIGIN_FOLDER_TASK.Replace("Debug", "Release"), brainService: false);
+            GenerateCompleteVersion(Path.Combine(destinationFolder, NOME_SERVICO_WINDOWS), ORIGIN_FOLDER_BRAIN.Replace("Debug", "Release"), brainService: true);
 
             UploadOptions uploadOptions = new UploadOptions
             {
@@ -31,19 +37,19 @@ namespace AutomacaoVersaoTask
             CompactVersionFiles(uploadOptions);
             Directory.Delete(destinationFolder, true);
 
-            uploadOptions.FilePath = Path.Combine(_DestinationFolderOficial, fileRAR);
+            uploadOptions.FilePath = Path.Combine(DESTINATION_FOLDER_TEST, fileRAR);
 
             return uploadOptions;
         }
 
         public static UploadOptions TestVersionComplete(string folderName, bool includeBrainService)
         {
-            string destinationFolder = Path.Combine(_DestinationFolderTest, folderName);
+            string destinationFolder = Path.Combine(DESTINATION_FOLDER_TEST, folderName);
             string fileRAR = Path.GetFileName($"{destinationFolder}.rar");
 
-            GenerateCompleteVersion(Path.Combine(destinationFolder, "TaskToDo"), _OriginFolderTask, brainService: false);
+            GenerateCompleteVersion(Path.Combine(destinationFolder, NOME_PROJETO_PRINCIPAL), ORIGIN_FOLDER_TASK, brainService: false);
             if(includeBrainService)
-                GenerateCompleteVersion(Path.Combine(destinationFolder, "BrainService"), _OriginFolderBrain, brainService: true);
+                GenerateCompleteVersion(Path.Combine(destinationFolder, NOME_SERVICO_WINDOWS), ORIGIN_FOLDER_BRAIN, brainService: true);
 
             UploadOptions uploadOptions = new UploadOptions
             {
@@ -55,19 +61,19 @@ namespace AutomacaoVersaoTask
             CompactVersionFiles(uploadOptions);
             Directory.Delete(destinationFolder, true);
 
-            uploadOptions.FilePath = Path.Combine(_DestinationFolderTest, fileRAR);
+            uploadOptions.FilePath = Path.Combine(DESTINATION_FOLDER_TEST, fileRAR);
 
             return uploadOptions;
         }
 
         public static UploadOptions TestVersionCompact(string folderName, bool includeBrainService)
         {
-            string destinationFolder = Path.Combine(_DestinationFolderTest, folderName);
+            string destinationFolder = Path.Combine(DESTINATION_FOLDER_TEST, folderName);
             string fileRAR = Path.GetFileName($"{destinationFolder}.rar");
 
-            GenerateCompactVersion(Path.Combine(destinationFolder, "TaskToDo"), _OriginFolderTask);
+            GenerateCompactVersion(Path.Combine(destinationFolder, NOME_PROJETO_PRINCIPAL), ORIGIN_FOLDER_TASK);
             if (includeBrainService)
-                GenerateCompleteVersion(Path.Combine(destinationFolder, "BrainService"), _OriginFolderBrain, brainService: true);
+                GenerateCompleteVersion(Path.Combine(destinationFolder, NOME_SERVICO_WINDOWS), ORIGIN_FOLDER_BRAIN, brainService: true);
 
             UploadOptions uploadOptions = new UploadOptions
             {
@@ -79,7 +85,7 @@ namespace AutomacaoVersaoTask
             CompactVersionFiles(uploadOptions);
             Directory.Delete(destinationFolder, true);
 
-            uploadOptions.FilePath = Path.Combine(_DestinationFolderTest, fileRAR);
+            uploadOptions.FilePath = Path.Combine(DESTINATION_FOLDER_TEST, fileRAR);
 
             return uploadOptions;
         }
@@ -87,7 +93,7 @@ namespace AutomacaoVersaoTask
         private static void GenerateCompleteVersion(string destinationFolder, string originFolder, bool brainService)
         {
             string destinationFolderDlls = Path.Combine(destinationFolder, "dlls");
-            string configName = brainService ? "tasktodobrainservice.exe.config" : "tasktodo.exe.config";
+            string configName = brainService ? CONFIG_FILE_BRAIN : CONFIG_FILE_TASK;
 
             var files = Directory.GetFiles(originFolder, "*", SearchOption.AllDirectories);
 
@@ -124,8 +130,8 @@ namespace AutomacaoVersaoTask
             var files = Directory.GetFiles(originFolder, "*", SearchOption.AllDirectories);
 
             var dlls = files.Where(f =>
-                (Path.GetFileName(f).ToLower().Contains("tasktodoautomation") && Path.GetExtension(f) == ".dll") ||
-                (Path.GetFileName(f).ToLower() == "tasktodo.exe")
+                (Path.GetFileName(f).ToLower().Contains(NOME_INICIAL_DLLS_NECESSARIAS) && Path.GetExtension(f) == ".dll") ||
+                (Path.GetFileName(f).ToLower() == NOME_ARQUIVO_EXE)
             );
 
             if (!Directory.Exists(destinationFolder))
@@ -143,8 +149,8 @@ namespace AutomacaoVersaoTask
         {
             try
             {
-                string outputDirectory = uploadOptions.VersionType == VersionTaskType.OficialVersion ? _DestinationFolderOficial : _DestinationFolderTest;
-                if (File.Exists(_WinrarPath))
+                string outputDirectory = uploadOptions.VersionType == VersionTaskType.OficialVersion ? DESTINATION_FOLDER_OFICIAL : DESTINATION_FOLDER_TEST;
+                if (File.Exists(WINRAR_PATH))
                 {
                     if (File.Exists($"{uploadOptions.FilePath}.rar"))
                         File.Delete($"{uploadOptions.FilePath}.rar");
@@ -155,9 +161,9 @@ namespace AutomacaoVersaoTask
                     else
                         args = new string[] { "a", "-o+", "-ep1", "-m5", uploadOptions.FileName, uploadOptions.FilePath };
 
-                    ProcessUtils.IniciarProcesso(_WinrarPath, args, outputDirectory);
+                    ProcessUtils.IniciarProcesso(WINRAR_PATH, args, outputDirectory);
                 }
-                else if (File.Exists(_SevenZipPath))
+                else if (File.Exists(SEVEN_ZIP_PATH))
                 {
                     if (File.Exists($"{uploadOptions.FilePath}.zip"))
                         File.Delete($"{uploadOptions.FilePath}.zip");
@@ -169,7 +175,7 @@ namespace AutomacaoVersaoTask
                     else
                         args = new string[] { "a", "-aoa", "-tzip", fileName, uploadOptions.FilePath };
 
-                    ProcessUtils.IniciarProcesso(_SevenZipPath, args, outputDirectory);
+                    ProcessUtils.IniciarProcesso(SEVEN_ZIP_PATH, args, outputDirectory);
                 } else
                 {
                     Console.WriteLine("Erro ao compactar arquivos, verifique se possuí um dos seguintes programas instalados: '7Zip', 'WinRAR'");

@@ -10,10 +10,13 @@ namespace AutomacaoVersaoTask
 {
     public class ProcessUtils
     {
+        private const string NOME_SOLUCAO = ""; // Nome da Solução do projeto (Visual Studio)
+        private const string VISUAL_STUDIO_19 = "VisualStudio.DTE.16.0";
+
         public static string CleanAndBuildSolution(VersionTaskType versionTaskType = VersionTaskType.CompleteVersion)
         {
             var processoVS = Process.GetProcessesByName("devenv");
-            Process processoTaskToDo = processoVS.Where(w => w.MainWindowTitle.Contains("TaskToDo")).FirstOrDefault();
+            Process processoTaskToDo = processoVS.Where(w => w.MainWindowTitle.Contains(NOME_SOLUCAO)).FirstOrDefault();
 
             if (processoTaskToDo != null)
             {
@@ -38,8 +41,8 @@ namespace AutomacaoVersaoTask
                 return dte.Solution.FullName;
             }
 
-            Console.WriteLine("Processo do TaskToDo não encontrado");
-            throw new Exception("Processo do TaskToDo não encontrado");
+            Console.WriteLine($"Processo do {NOME_SOLUCAO} não encontrado");
+            throw new Exception($"Processo do {NOME_SOLUCAO} não encontrado");
         }
 
         public static string GetNomeBranch(string workingDirectory)
@@ -104,7 +107,7 @@ namespace AutomacaoVersaoTask
 
         private static EnvDTE.DTE GetSolutionTaskToDo(int processId)
         {
-            string runningObjectDisplayName = $"VisualStudio.DTE.16.0:{processId}";
+            string runningObjectDisplayName = $"{VISUAL_STUDIO_19}:{processId}"; // Visual Studio 19
 
             IEnumerable<string> runningObjectDisplayNames = null;
             object runningObject = null;
