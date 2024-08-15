@@ -1,8 +1,19 @@
-O Projeto foi criado para automatizar alguns processos diários que eram necessários, ao gerar versões de uma aplicação desktop, na qual eu trabalho diariamente, implementando melhorias e corrigindo bugs.
+## Automação de Geração de Versões para Aplicação Desktop
 
-Os processo automatizados pelo código são:
-- Clean e Rebuild da solução no VisualStudio;
-- Cóipia e compactação dos arquivos do projeto para uma pasta de destino escolhida;
-- Upload dos arquivos compactados para uma conta do Google Drive;
+Este projeto foi desenvolvido para otimizar o processo de geração de versões de uma aplicação desktop, eliminando tarefas manuais e repetitivas que faziam parte do meu dia a dia como desenvolvedor.
 
-O projeto foi criado para gerar versão de uma aplicação específica, mas foi feito da maneira mais genérica possível e com algumas adaptações pode ser utilizado em outros projetos.
+### Processos Automatizados
+
+* **Limpeza e Reconstrução:** Realiza o "Clean" e "Rebuild" da solução no Visual Studio, garantindo que a versão gerada esteja atualizada e livre de erros de compilação.
+* **Cópia e Compactação:** Copia os arquivos necessários do projeto para uma pasta de destino definida pelo usuário e os compacta em um formato conveniente (por exemplo, .zip) para facilitar o armazenamento e distribuição.
+* **Upload para o Google Drive:** Envia automaticamente o arquivo compactado para uma conta específica do Google Drive, proporcionando um backup seguro e acessível de cada versão gerada.
+
+### Adaptabilidade
+
+Embora tenha sido inicialmente criado para uma aplicação específica, o projeto foi desenvolvido de forma modular e genérica, permitindo sua adaptação para outros projetos com relativa facilidade. Basta realizar alguns ajustes nas configurações e nos caminhos dos arquivos para que a automação funcione em diferentes contextos.
+
+**Observação:** Para utilizar este projeto, é necessário ter o Visual Studio instalado e configurado corretamente, além de fornecer as credenciais de acesso à conta do Google Drive. Consulte o arquivo de configuração para obter mais detalhes sobre como personalizar o comportamento da automação.
+
+**Contribuições são bem-vindas!** Se você tiver alguma sugestão de melhoria ou encontrar algum problema, sinta-se à vontade para abrir uma issue ou enviar um pull request.
+
+**Espero que este projeto seja útil para você!** 
